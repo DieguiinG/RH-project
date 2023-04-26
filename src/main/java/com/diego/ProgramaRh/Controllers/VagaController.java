@@ -1,5 +1,6 @@
 package com.diego.ProgramaRh.Controllers;
 
+import com.diego.ProgramaRh.models.Candidato;
 import com.diego.ProgramaRh.models.Vaga;
 import com.diego.ProgramaRh.repository.CandidatoRepository;
 import com.diego.ProgramaRh.repository.VagaRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,10 +45,23 @@ public class VagaController {
     //--------------------------------- Listar Vaga ------------------------//
 
     @RequestMapping("/vagas")
-    public ModelAndView listaVagas(){
+    public ModelAndView listaVagas() {
         ModelAndView mv = new ModelAndView("/vaga/listaVaga");
         Iterable<Vaga> vagas = vr.findAll();
-        mv.addObject("vagas",vagas);
+        mv.addObject("vagas", vagas);
         return mv;
+    }
+
+    //
+    @GetMapping(value = "{codigo}")
+    public ModelAndView detalhesVaga(@PathVariable("codigo") long codigo) {
+        Vaga vaga = vr.findByCodigo(codigo);
+        ModelAndView mv = new ModelAndView("vaga/detalhesVaga");
+        mv.addObject("vaga", vaga);
+
+        Iterable<Candidato> candidatos = cr.findByVaga(vaga);
+        mv.addObject("candidatos",candidatos);
+        return mv;
+
     }
 }
