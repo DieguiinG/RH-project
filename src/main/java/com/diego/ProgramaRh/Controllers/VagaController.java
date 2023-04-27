@@ -52,7 +52,7 @@ public class VagaController {
         return mv;
     }
 
-    //
+    //--------------------------------- Detalhes Vaga ------------------------//
     @GetMapping(value = "{codigo}")
     public ModelAndView detalhesVaga(@PathVariable("codigo") long codigo) {
         Vaga vaga = vr.findByCodigo(codigo);
@@ -60,8 +60,18 @@ public class VagaController {
         mv.addObject("vaga", vaga);
 
         Iterable<Candidato> candidatos = cr.findByVaga(vaga);
-        mv.addObject("candidatos",candidatos);
+        mv.addObject("candidatos", candidatos);
         return mv;
+
+    }
+
+    //--------------------------------- Deletar Vaga ------------------------//
+
+    @RequestMapping("/deletarVaga")
+    public String deletarVaga(long codigo) {
+        Vaga vaga = vr.findByCodigo(codigo);
+        vr.delete(vaga);
+        return "redirect/vagas";
 
     }
 }
