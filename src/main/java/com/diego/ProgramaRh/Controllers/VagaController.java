@@ -88,7 +88,8 @@ public class VagaController {
 
         //RG duplicado
         if (cr.findByRg(candidato.getRg()) != null) {
-            attributes.addFlashAttribute("mensagem", "RG duplicado") {
+            attributes.addFlashAttribute("mensagem", "RG duplicado");
+            {
                 return "redirect:/{codigo}";
             }
         }
@@ -103,13 +104,34 @@ public class VagaController {
     //--------------------------------- Deletar Candidato pelo RG ------------------------//
 
     @RequestMapping("/deletarCandidato")
-    public String deletarCandidato(String rg){
+    public String deletarCandidato(String rg) {
         Candidato candidato = cr.findByRg(rg);
         Vaga vaga = candidato.getVaga();
         String codigo = "" + vaga.getCodigo();
 
         cr.delete(candidato);
-        return "redirect:/"+codigo;
+        return "redirect:/" + codigo;
+    }
+//--------------------------------- MÉTODOS UPDATE ------------------------//
+
+    //Formulário para editar vaga
+
+    @GetMapping(value = "/editar-vaga")
+    public ModelAndView editarVaga(long codigo) {
+        Vaga vaga = vr.findByCodigo(codigo);
+        ModelAndView mv = new ModelAndView("vaga/update-vaga");
+        mv.addObject("vaga", vaga);
+        return mv;
     }
 
+    //UPDATE vaga
+    @PostMapping(value = "/editar-vaga")
+    public String uptadeVaga(@Valid Vaga vaga, BindingResult result, RedirectAttributes attributes) {
+        vr.save(vaga);
+        attributes.addFlashAttribute("sucess", "Vaga alterada com sucesso!");
+
+        long codigoLong = vaga.getCodigo();
+        String codigo = "" + codigoLong;
+        return "redirect:/" + codigo;
+    }
 }
